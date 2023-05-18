@@ -34,7 +34,7 @@ function hashPassword(password) {
 
 function createToken(email) {
   const jwtPassword = process.env.JWT_PASSWORD;
-  return jwt.sign({ email }, jwtPassword, { expiresIn: "120h" });
+  return jwt.sign({ email }, jwtPassword, { expiresIn: "99999999h" });
 }
 
 module.exports = { createUser, logUser };
