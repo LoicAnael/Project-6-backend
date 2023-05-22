@@ -6,7 +6,12 @@ const path = require("path");
 const port = 3000;
 //const bodyParser = require("body-parser");
 const { createUser, logUser } = require("./controllers/user");
-const { getSautes, createSautes } = require("./controllers/sautes");
+const {
+  getSautes,
+  createSautes,
+  getSauteById,
+  deleteSaute,
+} = require("./controllers/sautes");
 require("./mongo");
 
 //middleware
@@ -33,6 +38,8 @@ app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", logUser);
 app.post("/api/sauces", authenticateUser, upload.single("image"), createSautes);
 app.get("/api/sauces", authenticateUser, getSautes);
+app.get("/api/sauces/:id", authenticateUser, getSauteById);
+app.delete("/api/sauces/:id", authenticateUser, deleteSaute);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.listen(port, () => console.log("Listining on port " + port));

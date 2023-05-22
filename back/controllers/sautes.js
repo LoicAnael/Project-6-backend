@@ -5,6 +5,20 @@ function getSautes(req, res) {
     .catch((err) => console.log(err));
 }
 
+function getSauteById(req, res) {
+  const { id } = req.params;
+  Product.findById(id)
+    .then((product) => res.send(product))
+    .catch((err) => console.log(err));
+}
+
+function deleteSaute(req, res) {
+  const { id } = req.params;
+  Product.findByIdAndDelete(id)
+    .then((product) => res.send({ message: "produit supprimé", product }))
+    .catch((err) => console.log(err));
+}
+
 function createSautes(req, res) {
   const saute = JSON.parse(req.body.sauce);
   console.log({ file: req.file });
@@ -35,4 +49,4 @@ function createSautes(req, res) {
     .catch((err) => console.log(err));
 }
 
-module.exports = { getSautes, createSautes };
+module.exports = { getSautes, createSautes, getSauteById, deleteSaute };
