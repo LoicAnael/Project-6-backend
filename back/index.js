@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const path = require("path");
 const port = 3000;
 //const bodyParser = require("body-parser");
 const { createUser, logUser } = require("./controllers/user");
@@ -24,7 +25,6 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 const { authenticateUser } = require("./middleware/auth");
 const { upload } = require("./middleware/multer");
 
@@ -34,4 +34,5 @@ app.post("/api/auth/login", logUser);
 app.post("/api/sauces", authenticateUser, upload.single("image"), createSautes);
 app.get("/api/sauces", authenticateUser, getSautes);
 
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.listen(port, () => console.log("Listining on port " + port));

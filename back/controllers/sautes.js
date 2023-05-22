@@ -8,8 +8,11 @@ function getSautes(req, res) {
 function createSautes(req, res) {
   const saute = JSON.parse(req.body.sauce);
   console.log({ file: req.file });
+
   const { name, manufacturer, description, mainPepper, heat, userId } = saute;
-  const imageUrl = req.file.destination + req.file.filename;
+  const imageUrl =
+    req.protocol + "://" + req.get("host") + "/images/" + req.file.filename;
+  console.log(req);
 
   const product = new Product({
     userId,
@@ -26,7 +29,9 @@ function createSautes(req, res) {
   });
   product
     .save()
-    .then((product) => console.log("nouveau produit", product))
+    .then((product) => {
+      res.status(201).send({ message: product });
+    })
     .catch((err) => console.log(err));
 }
 
