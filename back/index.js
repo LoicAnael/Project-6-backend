@@ -11,6 +11,7 @@ const {
   createSautes,
   getSauteById,
   deleteSaute,
+  modifySaute,
 } = require("./controllers/sautes");
 require("./mongo");
 
@@ -37,6 +38,12 @@ const { upload } = require("./middleware/multer");
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", logUser);
 app.post("/api/sauces", authenticateUser, upload.single("image"), createSautes);
+app.put(
+  "/api/sauces/:id",
+  authenticateUser,
+  upload.single("image"),
+  modifySaute
+);
 app.get("/api/sauces", authenticateUser, getSautes);
 app.get("/api/sauces/:id", authenticateUser, getSauteById);
 app.delete("/api/sauces/:id", authenticateUser, deleteSaute);
