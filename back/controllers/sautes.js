@@ -17,7 +17,9 @@ function deleteSaute(req, res) {
   const { id } = req.params;
   Product.findByIdAndDelete(id)
     .then(deleteImage)
-    .then((product) => res.send({ message: "produit supprimé", product }))
+    .then((product) => {
+      return res.send({ message: "produit supprimé", product });
+    })
     .catch((err) =>
       res.status(500).send({ message: "une erreur est survenue", err })
     );
@@ -30,17 +32,18 @@ function deleteImage(product) {
 }
 
 function modifySaute(req, res) {
-  const { id } = req.params;
-  const { body } = req;
-  Product.findByIdAndUpdate(id, body)
-    .then((response) => {
-      if (response == null) {
-        console.log("noting updated !");
-        res.status(404).send({ message: "Object not found" });
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
       }
-      res.status(200).send({ message: "Succesfully updated" });
-    })
-    .catch((err) => console.log("update error", err));
+    : { ...req.body };
+  Product.findByIdAndUpdate(req.params.id, sauceObject)
+    .then((product) => deleteImage(product))
+    .then(() => res.status(200).json({ message: "sauce mise à jour" }))
+    .catch((error) => res.status(400).json({ error }));
 }
 
 function createSautes(req, res) {
