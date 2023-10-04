@@ -6,9 +6,13 @@ function getSautes(req, res) {
     .catch((err) => console.log(err));
 }
 
-function getSauteById(req, res) {
+function getSaute(req, res) {
   const { id } = req.params;
-  Product.findById(id)
+  return Product.findById(id);
+}
+
+function getSauteById(req, res) {
+  getSaute(req, res)
     .then((product) => res.send(product))
     .catch((err) => console.log(err));
 }
@@ -73,10 +77,36 @@ function createSautes(req, res) {
     .catch((err) => console.log(err));
 }
 
+function likeSaute(req, res) {
+  const { like, userId } = req.body;
+  if (![1, -1, 0].includes(like))
+    return res.status(400).send({ message: "invalid like value" });
+  getSaute(req, res)
+    .then((product) => updateVote(product, like, userId))
+    .catch((err) => res.status(500).send(err));
+}
+
+function updateVote(product, like, userId) {
+  if (like === 1) incrementLike(product, userId), like;
+}
+
+function incrementLike(product, userId, like) {
+  console.log("produit avant: ", product);
+  const { usersLikes, usersDislikes } = product;
+
+  const voteArray = like === 1 ? usersLikes : usersDislikes;
+
+  if (voteArray.includes(userId)) return;
+  voteArray.push(userId);
+  product.likes++;
+  console.log("produit apres: ", product);
+}
+
 module.exports = {
   getSautes,
   createSautes,
   getSauteById,
   deleteSaute,
   modifySaute,
+  likeSaute,
 };

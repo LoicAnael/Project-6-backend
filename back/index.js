@@ -4,16 +4,9 @@ const app = express();
 const cors = require("cors");
 const path = require("path");
 const port = 3000;
-//const bodyParser = require("body-parser");
-const { createUser, logUser } = require("./controllers/user");
-const {
-  getSautes,
-  createSautes,
-  getSauteById,
-  deleteSaute,
-  modifySaute,
-} = require("./controllers/sautes");
 require("./mongo");
+const { sauteRouter } = require("./routers/saute");
+const { userRouter } = require("./routers/user");
 
 //middleware
 app.use(cors());
@@ -31,22 +24,10 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const { authenticateUser } = require("./middleware/auth");
-const { upload } = require("./middleware/multer");
 
 //routes
-app.post("/api/auth/signup", createUser);
-app.post("/api/auth/login", logUser);
-app.post("/api/sauces", authenticateUser, upload.single("image"), createSautes);
-app.put(
-  "/api/sauces/:id",
-  authenticateUser,
-  upload.single("image"),
-  modifySaute
-);
-app.get("/api/sauces", authenticateUser, getSautes);
-app.get("/api/sauces/:id", authenticateUser, getSauteById);
-app.delete("/api/sauces/:id", authenticateUser, deleteSaute);
+app.use("/api/auth", userRouter);
+app.use("/api/sauces", sauteRouter);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.listen(port, () => console.log("Listining on port " + port));
